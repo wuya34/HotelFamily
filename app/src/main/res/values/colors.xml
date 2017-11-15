@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="red_new_year">#fc1212</color>
+    <color name="white">#e2dddd</color>
+    <color name="light_red_new_year">#f4b5b5</color>
 </resources>

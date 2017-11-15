@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">HotelFamily</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello take out fragment</string>
+    <string name="hot_fragment">hot fragment</string>
+    <string name="take_out_fragment">take out fragment</string>
+    <string name="book_fragment">book fragment</string>
+    <string name="about_us_fragment">about us fragment</string>
+
 </resources>
