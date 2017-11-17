@@ -1,6 +1,7 @@
 package com.example.amyas.hotelfamily;
 
 import android.content.Context;
+import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,10 +10,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Emitter;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
@@ -64,26 +87,44 @@ public class TakeOutFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Observable.create(new ObservableOnSubscribe<Integer>() {
+//        List<String> list = new ArrayList<>();
+//        list.add("hello");list.add("world");list.add("world");list.add("world");
+
+        Flowable<Integer> flowable = Flowable.create(new FlowableOnSubscribe<Integer>() {
             @Override
-            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                Log.d(TAG, "emit 1");
-                emitter.onNext(1);
-                Log.d(TAG, "emit 2");
-                emitter.onNext(2);
-                Log.d(TAG, "emit 3");
-                emitter.onNext(3);
-                Log.d(TAG, "emit complete");
-                emitter.onComplete();
-                Log.d(TAG, "emit 4");
-                emitter.onNext(4);
+            public void subscribe(FlowableEmitter<Integer> e) throws Exception {
+                for (int i = 0; i < 300; i++) {
+                    Log.d(TAG, "emit: "+i);
+                    e.onNext(i);
+                }
             }
-        }).subscribe(new Consumer<Integer>() {
+        }, BackpressureStrategy.ERROR);
+        Subscriber<Integer> subscriber = new Subscriber<Integer>() {
             @Override
-            public void accept(Integer integer) throws Exception {
-                Log.d(TAG, "onNext: " + integer);
+            public void onSubscribe(Subscription s) {
+                Log.d(TAG, "onSubscribe: set demand 2");
+                s.request(0);
             }
-        });
+
+            @Override
+            public void onNext(Integer s) {
+                Log.d(TAG, "onNext: received "+ s);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+        flowable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+
 
     }
 
@@ -132,4 +173,5 @@ public class TakeOutFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

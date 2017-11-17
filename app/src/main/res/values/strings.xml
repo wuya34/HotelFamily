@@ -10,5 +10,9 @@
 
     <string name="lucky">攒人品</string>
     <string name="desk_number">桌号</string>
+    <string name="account">帐号</string>
+    <string name="password">密码</string>
+    <string name="retrieve_password">找回密码?</string>
+    <string name="login">登录</string>
 
 </resources>

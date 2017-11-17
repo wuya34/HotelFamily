@@ -1,6 +1,13 @@
 package com.example.amyas.hotelfamily.model;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.example.amyas.hotelfamily.db.OrderBaseHelper;
+import com.example.amyas.hotelfamily.db.OrderCursorWrapper;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.OrderTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,37 +20,79 @@ import java.util.UUID;
 
 public class OrderLab {
     private static OrderLab sOrderLab;
-    private List<Order> mOrderList;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
-    private OrderLab(){
-        mOrderList = new ArrayList<>();
-        init();
+    private OrderLab(Context context) {
+        mContext = context;
+        mDatabase = new OrderBaseHelper(context).getWritableDatabase();
     }
 
-    public static OrderLab get(Context context){
-        if (sOrderLab==null){
-            sOrderLab = new OrderLab();
+    public static OrderLab get(Context context) {
+        if (sOrderLab == null) {
+            sOrderLab = new OrderLab(context);
         }
         return sOrderLab;
     }
-    private void init(){
-        for (int i = 0; i < 10; i++) {
-            Order order = new Order();
-            order.setAvailable(i%2==0);
-            order.setDesk_number(i);
-            order.setPrice(i*300);
-            mOrderList.add(order);
-        }
+
+    private static ContentValues getContentValues(Order order) {
+        ContentValues values = new ContentValues();
+        values.put(OrderTable.COL.UUID, order.getUUID().toString());
+        values.put(OrderTable.COL.DATE, order.getDate().getTime());
+        values.put(OrderTable.COL.DESK_NUMBER, order.getDesk_number());
+        values.put(OrderTable.COL.isAvailable, order.isAvailable()?0:1);
+        values.put(OrderTable.COL.PRICE, order.getPrice());
+        return values;
     }
-    public List<Order> getOrderList(){
-        return mOrderList;
-    }
-    public Order getOrder(UUID uuid){
-        for (Order order : mOrderList) {
-            if (order.getUUID().equals(uuid)){
-                return order;
+
+    public List<Order> getOrderList() {
+        List<Order> orders = new ArrayList<>();
+        OrderCursorWrapper cursorWrapper = queryOrders(null, null);
+        try {
+            cursorWrapper.moveToFirst();
+            while (!cursorWrapper.isAfterLast()){
+                orders.add(cursorWrapper.getOrder());
+                cursorWrapper.moveToNext();
             }
+        }finally {
+            cursorWrapper.close();
         }
-        return null;
+        return orders;
+    }
+
+    public Order getOrder(UUID uuid) {
+        OrderCursorWrapper wrapper = queryOrders(OrderTable.COL.UUID+ " = ?",
+                new String[]{uuid.toString()});
+        try {
+            if (wrapper.getCount()==0){
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getOrder();
+        }finally {
+            wrapper.close();
+        }
+    }
+    public void addOrder(Order order){
+        ContentValues values = getContentValues(order);
+        mDatabase.insert(OrderTable.NAME, null, values);
+    }
+    public void updateOrder(Order order){
+        ContentValues values = getContentValues(order);
+        String uuid = order.getUUID().toString();
+        mDatabase.update(OrderTable.NAME, values, OrderTable.COL.UUID+ " = ?",
+                new String[]{uuid});
+    }
+    private OrderCursorWrapper queryOrders(String whereClause, String[] whereArgs){
+        Cursor cursor = mDatabase.query(
+                OrderTable.NAME,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        return new OrderCursorWrapper(cursor);
     }
 }

@@ -55,7 +55,6 @@ public class BookFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment BookFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static BookFragment newInstance(String param1, String param2) {
         BookFragment fragment = new BookFragment();
         Bundle args = new Bundle();
@@ -81,10 +80,10 @@ public class BookFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recycler_view_book);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mRecyclerView.setAdapter(new BookAdapter(OrderLab.get(getActivity()).getOrderList()));
+        // TODO: 2017/11/17 增加开源项目的按钮，设置增加order的接口
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -119,7 +118,6 @@ public class BookFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
     private class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
