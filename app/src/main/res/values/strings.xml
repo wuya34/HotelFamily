@@ -8,4 +8,7 @@
     <string name="book_fragment">book fragment</string>
     <string name="about_us_fragment">about us fragment</string>
 
+    <string name="lucky">攒人品</string>
+    <string name="desk_number">桌号</string>
+
 </resources>

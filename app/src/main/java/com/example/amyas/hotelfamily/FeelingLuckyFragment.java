@@ -7,10 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.example.amyas.hotelfamily.util.ToastUtil;
+
+import java.util.Random;
+
+import info.hoang8f.widget.FButton;
 
 
-
-public class AboutUsFragment extends Fragment {
+public class FeelingLuckyFragment extends Fragment implements View.OnClickListener{
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -18,9 +24,13 @@ public class AboutUsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private FButton mFButton;
+
+    private Random mRandom = new Random();
+
     private OnFragmentInteractionListener mListener;
 
-    public AboutUsFragment() {
+    public FeelingLuckyFragment() {
         // Required empty public constructor
     }
 
@@ -30,11 +40,11 @@ public class AboutUsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AboutUsFragment.
+     * @return A new instance of fragment FeelingLuckyFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AboutUsFragment newInstance(String param1, String param2) {
-        AboutUsFragment fragment = new AboutUsFragment();
+    public static FeelingLuckyFragment newInstance(String param1, String param2) {
+        FeelingLuckyFragment fragment = new FeelingLuckyFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -49,13 +59,22 @@ public class AboutUsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about_us, container, false);
+        View view = inflater.inflate(R.layout.fragment_feeling_lucky, container, false);
+        mFButton = view.findViewById(R.id.lucky);
+        mFButton.setButtonColor(getResources().getColor(R.color.fbutton_color_alizarin));
+        mFButton.setShadowColor(getResources().getColor(R.color.fbutton_color_pomegranate));
+        mFButton.setShadowEnabled(true);
+        mFButton.setShadowHeight(8);
+        mFButton.setCornerRadius(5);
+        mFButton.setOnClickListener(this);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -80,6 +99,15 @@ public class AboutUsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int a;
+        if ((a=mRandom.nextInt(4))==1){
+            ToastUtil.showToast(getActivity(), "中奖了"+mRandom.nextInt(100)+" !!!");
+        }
+
     }
 
     /**

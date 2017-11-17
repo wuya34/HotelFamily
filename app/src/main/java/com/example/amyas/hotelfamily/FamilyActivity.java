@@ -13,9 +13,9 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 public class FamilyActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener,
-        AboutUsFragment.OnFragmentInteractionListener, BookFragment.OnFragmentInteractionListener,
+        FeelingLuckyFragment.OnFragmentInteractionListener, BookFragment.OnFragmentInteractionListener,
 HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteractionListener{
-    private AboutUsFragment mAboutUsFragment;
+    private FeelingLuckyFragment mFeelingLuckyFragment;
     private BookFragment mBookFragment;
     private HotFragment mHotFragment;
     private TakeOutFragment mTakeOutFragment;
@@ -34,7 +34,7 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
         navigationBar.addItem(new BottomNavigationItem(R.drawable.ic_action_book, "预订"))
                 .addItem(new BottomNavigationItem(R.drawable.ic_action_take_out, "外卖"))
                 .addItem(new BottomNavigationItem(R.drawable.ic_action_hot, "热卖"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_action_about_us, "家"))
+                .addItem(new BottomNavigationItem(R.drawable.ic_action_about_us, "我很幸运"))
                 .setFirstSelectedPosition(0)
                 .initialise();
         init();
@@ -87,7 +87,7 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
                 }else if (navigator_position==2){
                     SwitchFragment(mHotFragment,mBookFragment);
                 }else {
-                    SwitchFragment(mBookFragment, mAboutUsFragment);
+                    SwitchFragment(mFeelingLuckyFragment,mBookFragment);
                 }
                 navigator_position = 0;
                 break;
@@ -102,7 +102,7 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
                 }else if (navigator_position==2){
                     SwitchFragment(mHotFragment,mTakeOutFragment);
                 }else {
-                    SwitchFragment(mAboutUsFragment, mTakeOutFragment);
+                    SwitchFragment(mFeelingLuckyFragment, mTakeOutFragment);
                 }
                 navigator_position = 1;
                 break;
@@ -115,22 +115,22 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
                 }else if (navigator_position==1){
                     SwitchFragment(mTakeOutFragment,mHotFragment);
                 }else if (navigator_position==2){
-                    //                    SwitchFragment(mHotFragment,mAboutUsFragment);
+                    //                    SwitchFragment(mHotFragment,mFeelingLuckyFragment);
                 }else {
-                    SwitchFragment(mAboutUsFragment, mHotFragment);
+                    SwitchFragment(mFeelingLuckyFragment, mHotFragment);
                 }
                 navigator_position = 2;
                 break;
             case 3:
-                if (mAboutUsFragment==null){
-                    mAboutUsFragment = new AboutUsFragment();
+                if (mFeelingLuckyFragment ==null){
+                    mFeelingLuckyFragment = new FeelingLuckyFragment();
                 }
                 if (navigator_position==0){
-                    SwitchFragment(mBookFragment,mAboutUsFragment);
+                    SwitchFragment(mBookFragment, mFeelingLuckyFragment);
                 }else if (navigator_position==1){
-                    SwitchFragment(mTakeOutFragment,mAboutUsFragment);
+                    SwitchFragment(mTakeOutFragment, mFeelingLuckyFragment);
                 }else if (navigator_position==2){
-                    SwitchFragment(mHotFragment,mAboutUsFragment);
+                    SwitchFragment(mHotFragment, mFeelingLuckyFragment);
                 }else {}
                 navigator_position = 3;
         }

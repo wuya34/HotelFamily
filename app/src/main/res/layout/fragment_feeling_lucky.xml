@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                tools:context="com.example.amyas.hotelfamily.FeelingLuckyFragment">
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/lucky"
+        android:layout_width="wrap_content"
+
+        android:text="@string/lucky"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"/>
+    <!--app:shadowEnabled="true"-->
+    <!--app:buttonColor="@color/fbutton_color_alizarin"-->
+    <!--app:shadowColor="@color/fbutton_color_pomegranate"-->
+    <!--app:shadowHeight="5dp"-->
+    <!--app:cornerRadius="5dp"-->
+</RelativeLayout>

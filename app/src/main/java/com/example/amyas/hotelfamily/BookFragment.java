@@ -1,12 +1,26 @@
 package com.example.amyas.hotelfamily;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.example.amyas.hotelfamily.model.Order;
+import com.example.amyas.hotelfamily.model.OrderLab;
+
+import org.w3c.dom.Text;
+
+import java.util.List;
 
 
 /**
@@ -18,14 +32,14 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class BookFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private RecyclerView mRecyclerView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,8 +77,11 @@ public class BookFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_book, container, false);
+        View view = inflater.inflate(R.layout.fragment_book, container, false);
+        mRecyclerView = view.findViewById(R.id.recycler_view_book);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mRecyclerView.setAdapter(new BookAdapter(OrderLab.get(getActivity()).getOrderList()));
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +121,44 @@ public class BookFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
+        private List<Order> mOrders;
+        public BookAdapter(List<Order> orders){
+            mOrders = orders;
+        }
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(getActivity())
+                    .inflate(R.layout.desk_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Order order = mOrders.get(position);
+            holder.OnBind(order);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mOrders.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder{
+            private TextView mTextView;
+            private ImageView mImageView;
+            public ViewHolder(View itemView) {
+                super(itemView);
+                mTextView = itemView.findViewById(R.id.desk_number);
+                mImageView = itemView.findViewById(R.id.desk);
+            }
+            public void OnBind(Order order){
+                mTextView.setText(String.valueOf(order.getDesk_number()));
+                Glide.with(itemView)
+                        .load(order.isAvailable()?R.drawable.available:R.drawable.booked)
+                        .into(mImageView);
+            }
+        }
     }
 }
