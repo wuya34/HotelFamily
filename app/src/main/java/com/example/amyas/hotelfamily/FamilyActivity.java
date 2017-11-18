@@ -1,5 +1,6 @@
 package com.example.amyas.hotelfamily;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,12 +9,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.example.amyas.hotelfamily.model.Order;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+
+import static com.example.amyas.hotelfamily.AddOrderFragment.UPDATE_ORDER_CODE;
 
 public class FamilyActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener,
-        FeelingLuckyFragment.OnFragmentInteractionListener, BookFragment.OnFragmentInteractionListener,
+        FeelingLuckyFragment.OnFragmentInteractionListener, BookFragment.OnOrderSelectedListener,
 HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteractionListener{
     private FeelingLuckyFragment mFeelingLuckyFragment;
     private BookFragment mBookFragment;
@@ -27,17 +35,9 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
         setContentView(R.layout.activity_main);
 
         BottomNavigationBar navigationBar = findViewById(R.id.fragment_navigator);
-        navigationBar.setMode(BottomNavigationBar.MODE_FIXED)
-                .setActiveColor(R.color.red_new_year)
-                .setInActiveColor(R.color.light_red_new_year);
-        navigationBar.setTabSelectedListener(this);
-        navigationBar.addItem(new BottomNavigationItem(R.drawable.ic_action_book, "预订"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_action_take_out, "外卖"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_action_hot, "热卖"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_action_about_us, "我很幸运"))
-                .setFirstSelectedPosition(0)
-                .initialise();
-        init();
+        initNavigationBar(navigationBar);
+        initFragment();
+        initCircleMenu();
     }
 
     @Override
@@ -78,7 +78,7 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
         switch (position) {
             case 0:
                 if (mBookFragment==null){
-                    mBookFragment = new BookFragment();
+                    mBookFragment = BookFragment.newInstance(null, null);
                 }
                 if (navigator_position==0){
 //                    SwitchFragment(mBookFragment,mBookFragment);
@@ -146,9 +146,49 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
 
     }
 
-    private void init(){
+    private void initFragment(){
         mBookFragment = new BookFragment();
         SwitchFragment(mBookFragment, mBookFragment);
     }
 
+    @Override
+    public void OnOrderSelected(Order order) {
+        Intent intent = AddOrderActivity.newIntent(this, order.getUUID());
+        startActivityForResult(intent, UPDATE_ORDER_CODE);
+    }
+    private void initCircleMenu(){
+        ImageView mIdea = new ImageView(this);
+        mIdea.setImageResource(R.drawable.ic_action_idea);
+        FloatingActionButton actionButton = new FloatingActionButton.Builder(this)
+                .setContentView(mIdea).build();
+        ((FloatingActionButton.LayoutParams)actionButton.getLayoutParams()).setMargins(
+                0,0,20,120
+        );
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+        ImageView mAddOrder = new ImageView(this);
+        mAddOrder.setImageResource(R.drawable.ic_action_add_order);
+        SubActionButton button1 = itemBuilder.setContentView(mAddOrder).build();
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
+                .addSubActionView(button1).attachTo(actionButton).build();
+
+        mAddOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = AddOrderActivity.newIntent(FamilyActivity.this, null);
+                startActivityForResult(intent, AddOrderFragment.ADD_ORDER_CODE);
+            }
+        });
+    }
+    private void initNavigationBar(BottomNavigationBar navigationBar){
+        navigationBar.setMode(BottomNavigationBar.MODE_FIXED)
+                .setActiveColor(R.color.red_new_year)
+                .setInActiveColor(R.color.light_red_new_year);
+        navigationBar.setTabSelectedListener(this);
+        navigationBar.addItem(new BottomNavigationItem(R.drawable.ic_action_book, "预订"))
+                .addItem(new BottomNavigationItem(R.drawable.ic_action_take_out, "外卖"))
+                .addItem(new BottomNavigationItem(R.drawable.ic_action_hot, "热卖"))
+                .addItem(new BottomNavigationItem(R.drawable.ic_action_about_us, "我很幸运"))
+                .setFirstSelectedPosition(0)
+                .initialise();
+    }
 }

@@ -39,9 +39,11 @@ public class OrderLab {
         ContentValues values = new ContentValues();
         values.put(OrderTable.COL.UUID, order.getUUID().toString());
         values.put(OrderTable.COL.DATE, order.getDate().getTime());
-        values.put(OrderTable.COL.DESK_NUMBER, order.getDesk_number());
+        values.put(OrderTable.COL.DESK_NUMBER, order.getDeskNumber());
         values.put(OrderTable.COL.isAvailable, order.isAvailable()?0:1);
         values.put(OrderTable.COL.PRICE, order.getPrice());
+        values.put(OrderTable.COL.NUMBER_OF_DINERS, order.getNumberOfDiners());
+        values.put(OrderTable.COL.PHONE_NUMBER, order.getPhoneNumber());
         return values;
     }
 

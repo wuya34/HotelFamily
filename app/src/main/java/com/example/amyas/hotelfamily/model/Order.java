@@ -10,10 +10,12 @@ import java.util.UUID;
 
 public class Order {
     private UUID mUUID;
-    private float price;
-    private int desk_number;
+    private String price;
+    private int deskNumber;
     private Date mDate;
     private boolean isAvailable;
+    private String phoneNumber;
+    private int numberOfDiners;
 
     public Order() {
         this(UUID.randomUUID());
@@ -22,6 +24,22 @@ public class Order {
     public Order(UUID uuid) {
         mUUID = uuid;
         mDate = new Date();
+    }
+
+    public int getNumberOfDiners() {
+        return numberOfDiners;
+    }
+
+    public void setNumberOfDiners(int numberOfDiners) {
+        this.numberOfDiners = numberOfDiners;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public boolean isAvailable() {
@@ -36,20 +54,20 @@ public class Order {
         return mUUID;
     }
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public int getDesk_number() {
-        return desk_number;
+    public int getDeskNumber() {
+        return deskNumber;
     }
 
-    public void setDesk_number(int desk_number) {
-        this.desk_number = desk_number;
+    public void setDeskNumber(int deskNumber) {
+        this.deskNumber = deskNumber;
     }
 
     public Date getDate() {

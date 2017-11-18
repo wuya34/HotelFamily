@@ -125,7 +125,6 @@ public class TakeOutFragment extends Fragment {
         flowable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
 
-
     }
 
     @Override

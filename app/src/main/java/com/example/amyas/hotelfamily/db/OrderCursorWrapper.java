@@ -20,16 +20,20 @@ public class OrderCursorWrapper extends CursorWrapper {
     }
     public Order getOrder(){
         String uuid = getString(getColumnIndex(OrderTable.COL.UUID));
-        float price = getFloat(getColumnIndex(OrderTable.COL.PRICE));
-        int desk_number = getInt(getColumnIndex(OrderTable.COL.DESK_NUMBER));
-        int is_available = getInt(getColumnIndex(OrderTable.COL.isAvailable));
+        String price = getString(getColumnIndex(OrderTable.COL.PRICE));
+        int deskNumber = getInt(getColumnIndex(OrderTable.COL.DESK_NUMBER));
+        int isAvailable = getInt(getColumnIndex(OrderTable.COL.isAvailable));
         long date = getLong(getColumnIndex(OrderTable.COL.DATE));
+        String phoneNumber = getString(getColumnIndex(OrderTable.COL.PHONE_NUMBER));
+        int numberOfDiners = getInt(getColumnIndex(OrderTable.COL.NUMBER_OF_DINERS));
 
         Order order = new Order(UUID.fromString(uuid));
         order.setPrice(price);
-        order.setDesk_number(desk_number);
+        order.setDeskNumber(deskNumber);
         order.setDate(new Date(date));
-        order.setAvailable(is_available==0);
+        order.setAvailable(isAvailable==0);
+        order.setPhoneNumber(phoneNumber);
+        order.setNumberOfDiners(numberOfDiners);
         return order;
     }
 }

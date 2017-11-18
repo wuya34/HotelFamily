@@ -14,6 +14,8 @@ public class OrderDbSchema {
             public static final String DESK_NUMBER = "desk_number";
             public static final String DATE = "date";
             public static final String isAvailable = "is_available";
+            public static final String NUMBER_OF_DINERS = "number_of_diners";
+            public static final String PHONE_NUMBER = "phone_number";
         }
     }
 }

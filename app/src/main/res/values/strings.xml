@@ -9,10 +9,13 @@
     <string name="about_us_fragment">about us fragment</string>
 
     <string name="lucky">攒人品</string>
-    <string name="desk_number">桌号</string>
+    <string name="deskNumber">桌号</string>
     <string name="account">帐号</string>
     <string name="password">密码</string>
     <string name="retrieve_password">找回密码?</string>
     <string name="login">登录</string>
-
+    <string name="number_of_diners">用餐人数</string>
+    <string name="consumer_phone">客户电话</string>
+    <string name="confirm">确定</string>
+    
 </resources>
