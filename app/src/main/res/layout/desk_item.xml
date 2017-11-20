@@ -29,7 +29,7 @@
         android:id="@+id/deskNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/deskNumber"
+        android:text="@string/desk_number"
         android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
