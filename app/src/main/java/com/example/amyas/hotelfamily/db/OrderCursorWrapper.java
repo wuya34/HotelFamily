@@ -3,8 +3,9 @@ package com.example.amyas.hotelfamily.db;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import com.example.amyas.hotelfamily.db.OrderDbSchema.OrderTable;
-import com.example.amyas.hotelfamily.model.Order;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.DeskTableSchema;
+import com.example.amyas.hotelfamily.model.DeskOrder;
+import com.example.amyas.hotelfamily.model.DeskTable;
 
 import java.util.Date;
 import java.util.UUID;
@@ -18,22 +19,34 @@ public class OrderCursorWrapper extends CursorWrapper {
     public OrderCursorWrapper(Cursor cursor) {
         super(cursor);
     }
-    public Order getOrder(){
-        String uuid = getString(getColumnIndex(OrderTable.COL.UUID));
-        String price = getString(getColumnIndex(OrderTable.COL.PRICE));
-        int deskNumber = getInt(getColumnIndex(OrderTable.COL.DESK_NUMBER));
-        int isAvailable = getInt(getColumnIndex(OrderTable.COL.isAvailable));
-        long date = getLong(getColumnIndex(OrderTable.COL.DATE));
-        String phoneNumber = getString(getColumnIndex(OrderTable.COL.PHONE_NUMBER));
-        int numberOfDiners = getInt(getColumnIndex(OrderTable.COL.NUMBER_OF_DINERS));
+    public DeskOrder getOrder(){
+        String uuid = getString(getColumnIndex(OrderDbSchema.DeskOrderSchema.COL.UUID));
+        String price = getString(getColumnIndex(OrderDbSchema.DeskOrderSchema.COL.PRICE));
+        String deskNumber = getString(getColumnIndex(OrderDbSchema.DeskOrderSchema.COL.DESK_NUMBER));
+        long date = getLong(getColumnIndex(OrderDbSchema.DeskOrderSchema.COL.DATE));
+        String relativeString = getString(getColumnIndex(OrderDbSchema.DeskOrderSchema.COL.RELATIVE_STRING));
 
-        Order order = new Order(UUID.fromString(uuid));
-        order.setPrice(price);
-        order.setDeskNumber(deskNumber);
-        order.setDate(new Date(date));
-        order.setAvailable(isAvailable==0);
-        order.setPhoneNumber(phoneNumber);
-        order.setNumberOfDiners(numberOfDiners);
-        return order;
+        DeskOrder deskOrder = new DeskOrder(UUID.fromString(uuid));
+        deskOrder.setPrice(price);
+        deskOrder.setDeskNumber(deskNumber);
+        deskOrder.setDate(new Date(date));
+        deskOrder.setRelativeString(relativeString);
+        return deskOrder;
+    }
+    public DeskTable getTable(){
+        String uuid = getString(getColumnIndex(DeskTableSchema.COL.UUID));
+        String deskNumber = getString(getColumnIndex(DeskTableSchema.COL.DESK_NUMBER));
+        int isAvailable = getInt(getColumnIndex(DeskTableSchema.COL.isAvailable));
+        String phoneNumber = getString(getColumnIndex(DeskTableSchema.COL.PHONE_NUMBER));
+        String numberOfDiners = getString(getColumnIndex(DeskTableSchema.COL.NUMBER_OF_DINERS));
+        String relativeString = getString(getColumnIndex(DeskTableSchema.COL.RELATIVE_STRING));
+
+        DeskTable deskTable = new DeskTable(UUID.fromString(uuid));
+        deskTable.setDeskNumber(deskNumber);
+        deskTable.setAvailable(isAvailable==0);
+        deskTable.setPhoneNumber(phoneNumber);
+        deskTable.setNumberOfDiners(numberOfDiners);
+        deskTable.setRelativeString(relativeString);
+        return deskTable;
     }
 }

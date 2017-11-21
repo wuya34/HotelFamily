@@ -1,7 +1,6 @@
 package com.example.amyas.hotelfamily;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,10 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.amyas.hotelfamily.model.Order;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+import com.example.amyas.hotelfamily.model.DeskOrder;
+import com.example.amyas.hotelfamily.model.DeskTable;
+import com.example.amyas.hotelfamily.model.OrderLab;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +28,17 @@ import java.util.List;
  * Use the {@link BookFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookFragment extends Fragment implements View.OnClickListener{
+public class BookFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     public static final int BOOK_CODE = 0;
-
     private String mParam1;
     private String mParam2;
-    private Order mOrder;
+    private DeskOrder mDeskOrder;
+    private DeskTable mDeskTable;
+    private BookAdapter mBookAdapter;
 
     private RecyclerView mRecyclerView;
 
@@ -82,23 +81,20 @@ public class BookFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_book, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view_book);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        List<Order> orders = new ArrayList<>();
-        Order order = new Order();
-        order.setPrice("100");order.setAvailable(true);
-        orders.add(order);
+        List<DeskTable> deskTables = OrderLab.get(getActivity()).getTableList();
 
-        //OrderLab.get(getActivity()).getOrderList()
-        mRecyclerView.setAdapter(new BookAdapter(orders));
+        mBookAdapter = new BookAdapter(deskTables);
+        mRecyclerView.setAdapter(mBookAdapter);
 
         // TODO: 2017/11/17 增加开源项目的按钮，设置增加order的接口
         return view;
     }
 
-    public void onButtonPressed(Order order) {
-        if (mListener != null) {
-            mListener.OnOrderSelected(order);
-        }
-    }
+//    public void onButtonPressed(DeskOrder deskOrder) {
+//        if (mListener != null) {
+//            mListener.OnOrderSelected(deskOrder);
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
@@ -117,16 +113,7 @@ public class BookFragment extends Fragment implements View.OnClickListener{
         mListener = null;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.desk_item:
-                if (mListener!=null){
-                    mListener.OnOrderSelected(mOrder);
-                }
 
-        }
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -139,12 +126,15 @@ public class BookFragment extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnOrderSelectedListener {
-        void OnOrderSelected(Order order);
+        void OnOrderSelected(DeskTable deskTable);
     }
     private class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
-        private List<Order> mOrders;
-        public BookAdapter(List<Order> orders){
-            mOrders = orders;
+        private List<DeskTable> mDeskTables;
+        public BookAdapter(List<DeskTable> deskTables){
+            mDeskTables = deskTables;
+        }
+        private void setDeskTables(List<DeskTable> deskTables){
+            mDeskTables = deskTables;
         }
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -155,31 +145,56 @@ public class BookFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            mOrder = mOrders.get(position);
-            holder.OnBind(mOrder);
+            mDeskTable = mDeskTables.get(position);
+            holder.OnBind(mDeskTable);
         }
 
         @Override
         public int getItemCount() {
-            return mOrders.size();
+            return mDeskTables.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder{
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+            private DeskTable mDeskTable;
             private TextView mTextView;
             private ImageView mImageView;
             public ViewHolder(View itemView) {
                 super(itemView);
+                itemView.setOnClickListener(this);
                 mTextView = itemView.findViewById(R.id.deskNumber);
                 mImageView = itemView.findViewById(R.id.desk);
-                itemView.setOnClickListener(BookFragment.this);
             }
-            public void OnBind(Order order){
-                mTextView.setText(String.valueOf(order.getDeskNumber()));
+            public void OnBind(DeskTable deskTable){
+                mDeskTable = deskTable;
+                mTextView.setText(String.valueOf(deskTable.getDeskNumber()));
                 Glide.with(itemView)
-                        .load(order.isAvailable()?R.drawable.booked:R.drawable.available)
+                        .load(mDeskTable.isAvailable()?R.drawable.booked:R.drawable.available)
                         .into(mImageView);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (mListener!=null){
+                    mListener.OnOrderSelected(mDeskTable);
+                }
             }
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void updateUI(){
+        List<DeskTable> list = OrderLab.get(getActivity()).getTableList();
+        if (mBookAdapter==null){
+            mBookAdapter = new BookAdapter(list);
+            mRecyclerView.setAdapter(mBookAdapter);
+        }else {
+            mBookAdapter.setDeskTables(list);
+            mBookAdapter.notifyDataSetChanged();
+        }
+    }
 }

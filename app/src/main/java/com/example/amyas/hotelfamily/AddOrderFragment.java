@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 
-import com.example.amyas.hotelfamily.db.OrderDbSchema;
-import com.example.amyas.hotelfamily.model.Order;
+import com.example.amyas.hotelfamily.model.DeskOrder;
+import com.example.amyas.hotelfamily.model.DeskTable;
 import com.example.amyas.hotelfamily.model.OrderLab;
 import com.example.amyas.hotelfamily.util.PickerFragment;
 
@@ -31,18 +31,20 @@ public class AddOrderFragment extends Fragment implements View.OnClickListener {
     public static final int REQUEST_CODE = 5;
     public static final int RESULT_OK = 6;
     public static final String DIALOG_PICKER = "DialogPicker";
-    public static final String ORDER_UUID = "AddOrderFragment.uuid";
-    private Order mOrder;
+    public static final String ORDER_UUID = "AddOrderFragment.uuid_order";
+    public static final String TABLE_UUID = "AddOrderFragment.uuid_table";
+    private DeskOrder mDeskOrder;
+    private DeskTable mDeskTable;
     private Button mSelectDesk;
     private Button mSelectNumber;
+    private EditText mEditText;
 
-    public static AddOrderFragment newInstance(UUID uuid) {
+    public static AddOrderFragment newInstance(UUID uuidTable, UUID uuidOrder) {
         AddOrderFragment fragment = new AddOrderFragment();
-        if (uuid != null) {
-            Bundle args = new Bundle();
-            args.putSerializable(ORDER_UUID, uuid);
-            fragment.setArguments(args);
-        }
+        Bundle args = new Bundle();
+        args.putSerializable(ORDER_UUID, uuidOrder);
+        args.putSerializable(TABLE_UUID, uuidTable);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -58,16 +60,30 @@ public class AddOrderFragment extends Fragment implements View.OnClickListener {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            UUID uuid = (UUID) bundle.getSerializable(ORDER_UUID);
+            UUID uuidOrder = (UUID) bundle.getSerializable(ORDER_UUID);
+            UUID uuidTable = (UUID) bundle.getSerializable(TABLE_UUID);
             //            ToastUtil.showToast(getActivity(), "received uuid: "+uuid);
-            mOrder = OrderLab.get(getActivity()).getOrder(uuid);
+            mDeskOrder = OrderLab.get(getActivity()).getOrder(uuidOrder);
+            mDeskTable = OrderLab.get(getActivity()).getTable(uuidTable);
         }
 
+        mEditText = view.findViewById(R.id.phone_edit);
         mSelectDesk = view.findViewById(R.id.select_desk);
         mSelectNumber = view.findViewById(R.id.select_number);
         mSelectNumber.setOnClickListener(this);
         mSelectDesk.setOnClickListener(this);
-        // TODO: 2017/11/18 增加菜单选项
+
+        String tmp;
+        if ((tmp=mDeskTable.getDeskNumber())!=null){
+            mSelectDesk.setText(tmp);
+        }
+        if ((tmp=mDeskTable.getNumberOfDiners())!=null){
+            mSelectNumber.setText(tmp);
+        }
+        if ((tmp=mDeskTable.getPhoneNumber())!=null){
+            mEditText.setText(tmp);
+        }
+        // TODO: 2017/11/21 添加isAvailable控件
         return view;
     }
 
@@ -110,6 +126,17 @@ public class AddOrderFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        OrderLab.get(getActivity()).updateOrder(mOrder);
+        updateData();
+    }
+
+    private void updateData(){
+        mDeskTable.setAvailable(false);
+        mDeskTable.setDeskNumber(mSelectDesk.getText().toString());
+        mDeskTable.setPhoneNumber(mEditText.getText().toString());
+        mDeskTable.setNumberOfDiners(mSelectNumber.getText().toString());
+
+        mDeskOrder.setDeskNumber(mSelectDesk.getText().toString());
+        OrderLab.get(getActivity()).updateOrder(mDeskOrder);
+        OrderLab.get(getActivity()).updateTable(mDeskTable);
     }
 }

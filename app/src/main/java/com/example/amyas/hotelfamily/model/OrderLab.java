@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.amyas.hotelfamily.db.OrderBaseHelper;
 import com.example.amyas.hotelfamily.db.OrderCursorWrapper;
-import com.example.amyas.hotelfamily.db.OrderDbSchema.OrderTable;
+import com.example.amyas.hotelfamily.db.OrderDbSchema;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.DeskOrderSchema;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.DeskTableSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,59 +37,169 @@ public class OrderLab {
         return sOrderLab;
     }
 
-    private static ContentValues getContentValues(Order order) {
+    private static ContentValues getContentValues(DeskOrder deskOrder) {
         ContentValues values = new ContentValues();
-        values.put(OrderTable.COL.UUID, order.getUUID().toString());
-        values.put(OrderTable.COL.DATE, order.getDate().getTime());
-        values.put(OrderTable.COL.DESK_NUMBER, order.getDeskNumber());
-        values.put(OrderTable.COL.isAvailable, order.isAvailable()?0:1);
-        values.put(OrderTable.COL.PRICE, order.getPrice());
-        values.put(OrderTable.COL.NUMBER_OF_DINERS, order.getNumberOfDiners());
-        values.put(OrderTable.COL.PHONE_NUMBER, order.getPhoneNumber());
+        values.put(DeskOrderSchema.COL.UUID, deskOrder.getUUID().toString());
+        values.put(DeskOrderSchema.COL.DATE, deskOrder.getDate().getTime());
+        values.put(DeskOrderSchema.COL.DESK_NUMBER, deskOrder.getDeskNumber());
+        values.put(DeskOrderSchema.COL.PRICE, deskOrder.getPrice());
+        values.put(DeskOrderSchema.COL.RELATIVE_STRING, deskOrder.getRelativeString());
         return values;
     }
 
-    public List<Order> getOrderList() {
-        List<Order> orders = new ArrayList<>();
-        OrderCursorWrapper cursorWrapper = queryOrders(null, null);
-        try {
-            cursorWrapper.moveToFirst();
-            while (!cursorWrapper.isAfterLast()){
-                orders.add(cursorWrapper.getOrder());
-                cursorWrapper.moveToNext();
-            }
-        }finally {
-            cursorWrapper.close();
-        }
-        return orders;
+    private static ContentValues getContentValues(DeskTable deskTable) {
+        ContentValues values = new ContentValues();
+        values.put(DeskTableSchema.COL.UUID, deskTable.getUUID().toString());
+        values.put(DeskTableSchema.COL.DESK_NUMBER, deskTable.getDeskNumber());
+        values.put(DeskTableSchema.COL.isAvailable, deskTable.isAvailable() ? 0 : 1);
+        values.put(DeskTableSchema.COL.NUMBER_OF_DINERS, deskTable.getNumberOfDiners());
+        values.put(DeskTableSchema.COL.PHONE_NUMBER, deskTable.getPhoneNumber());
+        values.put(DeskTableSchema.COL.RELATIVE_STRING, deskTable.getRelativeString());
+        return values;
     }
 
-    public Order getOrder(UUID uuid) {
-        OrderCursorWrapper wrapper = queryOrders(OrderTable.COL.UUID+ " = ?",
-                new String[]{uuid.toString()});
+    public List<DeskOrder> getOrderList() {
+        ArrayList<DeskOrder> deskOrders = new ArrayList<>();
+        OrderCursorWrapper cursorWrapper = query(null, null, OrderDbSchema.DeskOrderSchema.NAME);
         try {
-            if (wrapper.getCount()==0){
+            cursorWrapper.moveToFirst();
+            while (!cursorWrapper.isAfterLast()) {
+                deskOrders.add(cursorWrapper.getOrder());
+                cursorWrapper.moveToNext();
+            }
+        } finally {
+            cursorWrapper.close();
+        }
+        return deskOrders;
+    }
+
+    public List<DeskTable> getTableList() {
+        ArrayList<DeskTable> deskTables = new ArrayList<>();
+        OrderCursorWrapper cursorWrapper = query(null, null, DeskTableSchema.NAME);
+        try {
+            cursorWrapper.moveToFirst();
+            while (!cursorWrapper.isAfterLast()) {
+                deskTables.add(cursorWrapper.getTable());
+                cursorWrapper.moveToNext();
+            }
+        } finally {
+            cursorWrapper.close();
+        }
+        return deskTables;
+    }
+
+    public DeskOrder getOrder(UUID uuid) {
+        OrderCursorWrapper wrapper = query(OrderDbSchema.DeskOrderSchema.COL.UUID + " = ?",
+                new String[]{uuid.toString()}, OrderDbSchema.DeskOrderSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
                 return null;
             }
             wrapper.moveToFirst();
             return wrapper.getOrder();
-        }finally {
+        } finally {
             wrapper.close();
         }
     }
-    public void addOrder(Order order){
-        ContentValues values = getContentValues(order);
-        mDatabase.insert(OrderTable.NAME, null, values);
+
+    public DeskTable getTable(UUID uuid) {
+        OrderCursorWrapper wrapper = query(DeskTableSchema.COL.UUID + " = ?",
+                new String[]{uuid.toString()}, DeskTableSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getTable();
+        } finally {
+            wrapper.close();
+        }
     }
-    public void updateOrder(Order order){
-        ContentValues values = getContentValues(order);
-        String uuid = order.getUUID().toString();
-        mDatabase.update(OrderTable.NAME, values, OrderTable.COL.UUID+ " = ?",
+
+
+    public void addOrder(DeskOrder deskOrder) {
+        ContentValues values = getContentValues(deskOrder);
+        mDatabase.insert(OrderDbSchema.DeskOrderSchema.NAME, null, values);
+    }
+
+    public void addTable(DeskTable deskTable) {
+        ContentValues values = getContentValues(deskTable);
+        mDatabase.insert(DeskTableSchema.NAME, null, values);
+    }
+
+    public void updateOrder(DeskOrder deskOrder) {
+        ContentValues values = getContentValues(deskOrder);
+        String uuid = deskOrder.getUUID().toString();
+        mDatabase.update(OrderDbSchema.DeskOrderSchema.NAME, values, OrderDbSchema.DeskOrderSchema.COL.UUID + " = ?",
                 new String[]{uuid});
     }
-    private OrderCursorWrapper queryOrders(String whereClause, String[] whereArgs){
+
+    public void updateTable(DeskTable deskTable) {
+        ContentValues values = getContentValues(deskTable);
+        String uuid = deskTable.getUUID().toString();
+        mDatabase.update(DeskTableSchema.NAME, values, DeskTableSchema.COL.UUID + " = ?",
+                new String[]{uuid});
+    }
+
+    public DeskOrder orderQueryByDeskNumber(String deskNumber){
+        OrderCursorWrapper wrapper = query(DeskOrderSchema.COL.DESK_NUMBER+ " = ?",
+                new String[]{deskNumber}, DeskOrderSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getOrder();
+        } finally {
+            wrapper.close();
+        }
+    }
+
+    public DeskTable tableQueryByDeskNumber(String deskNumber){
+        OrderCursorWrapper wrapper = query(DeskOrderSchema.COL.DESK_NUMBER+ " = ?",
+                new String[]{deskNumber}, DeskTableSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getTable();
+        } finally {
+            wrapper.close();
+        }
+    }
+
+    public DeskOrder orderQueryByRelativeString(String relativeString){
+        OrderCursorWrapper wrapper = query(DeskOrderSchema.COL.RELATIVE_STRING+ " = ?",
+                new String[]{relativeString}, DeskOrderSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getOrder();
+        } finally {
+            wrapper.close();
+        }
+    }
+
+    public DeskTable tableQueryByRelativeString(String relativeString){
+        OrderCursorWrapper wrapper = query(DeskOrderSchema.COL.RELATIVE_STRING+ " = ?",
+                new String[]{relativeString}, DeskTableSchema.NAME);
+        try {
+            if (wrapper.getCount() == 0) {
+                return null;
+            }
+            wrapper.moveToFirst();
+            return wrapper.getTable();
+        } finally {
+            wrapper.close();
+        }
+    }
+
+    private OrderCursorWrapper query(String whereClause, String[] whereArgs, String tableName) {
         Cursor cursor = mDatabase.query(
-                OrderTable.NAME,
+                tableName,
                 null,
                 whereClause,
                 whereArgs,
@@ -97,4 +209,5 @@ public class OrderLab {
         );
         return new OrderCursorWrapper(cursor);
     }
+
 }

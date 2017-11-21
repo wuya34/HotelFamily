@@ -13,10 +13,15 @@ import android.widget.ImageView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.example.amyas.hotelfamily.model.Order;
+import com.example.amyas.hotelfamily.model.DeskOrder;
+import com.example.amyas.hotelfamily.model.DeskTable;
+import com.example.amyas.hotelfamily.model.OrderLab;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+
+import java.util.Random;
+import java.util.UUID;
 
 import static com.example.amyas.hotelfamily.AddOrderFragment.UPDATE_ORDER_CODE;
 
@@ -152,8 +157,10 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
     }
 
     @Override
-    public void OnOrderSelected(Order order) {
-        Intent intent = AddOrderActivity.newIntent(this, order.getUUID());
+    public void OnOrderSelected(DeskTable deskTable) {
+        String relativeString = deskTable.getRelativeString();
+        DeskOrder order = OrderLab.get(FamilyActivity.this).orderQueryByRelativeString(relativeString);
+        Intent intent = AddOrderActivity.newIntent(this, deskTable.getUUID(),order.getUUID());
         startActivityForResult(intent, UPDATE_ORDER_CODE);
     }
     private void initCircleMenu(){
@@ -174,7 +181,16 @@ HotFragment.OnFragmentInteractionListener, TakeOutFragment.OnFragmentInteraction
         mAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = AddOrderActivity.newIntent(FamilyActivity.this, null);
+                DeskTable deskTable = new DeskTable();
+                DeskOrder deskOrder = new DeskOrder();
+                String relativeString = String.valueOf(new Random().nextInt(Integer.MAX_VALUE));
+                deskTable.setRelativeString(relativeString);
+                deskOrder.setRelativeString(relativeString);
+                OrderLab.get(FamilyActivity.this).addOrder(deskOrder);
+                OrderLab.get(FamilyActivity.this).addTable(deskTable);
+                Intent intent = AddOrderActivity.newIntent(FamilyActivity.this,
+                        deskTable.getUUID(),
+                        deskOrder.getUUID());
                 startActivityForResult(intent, AddOrderFragment.ADD_ORDER_CODE);
             }
         });

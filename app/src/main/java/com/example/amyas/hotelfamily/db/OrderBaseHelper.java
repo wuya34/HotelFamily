@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.amyas.hotelfamily.db.OrderDbSchema.OrderTable;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.DeskOrderSchema;
+import com.example.amyas.hotelfamily.db.OrderDbSchema.DeskTableSchema;
 
 /**
  * author: Amyas
@@ -20,11 +21,23 @@ public class OrderBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table "+ OrderTable.NAME+"("+
-        " _id integer primary key autoincrement, "+ OrderTable.COL.UUID
-                +", "+OrderTable.COL.DESK_NUMBER+", "+OrderTable.COL.isAvailable+", "
-        +OrderTable.COL.DATE+", "+ OrderTable.COL.PRICE+", "+OrderTable.COL.PHONE_NUMBER
-                +", "+OrderTable.COL.NUMBER_OF_DINERS+")");
+        db.execSQL("create table "+ DeskOrderSchema.NAME+"("+
+        " _id integer primary key autoincrement, "
+                + DeskOrderSchema.COL.UUID +", "
+                + DeskOrderSchema.COL.DESK_NUMBER+", "
+                + DeskOrderSchema.COL.DATE+", "
+                + DeskOrderSchema.COL.RELATIVE_STRING+" ,"
+                + DeskOrderSchema.COL.PRICE+")");
+
+        db.execSQL("create table "+ DeskTableSchema.NAME+"("
+                + " _id integer primary key autoincrement, "
+                + DeskTableSchema.COL.UUID +", "
+                + DeskTableSchema.COL.DESK_NUMBER+", "
+                + DeskTableSchema.COL.isAvailable+", "
+                + DeskTableSchema.COL.PHONE_NUMBER +", "
+                + DeskTableSchema.COL.NUMBER_OF_DINERS+" ,"
+                + DeskTableSchema.COL.RELATIVE_STRING
+                +")");
     }
 
     @Override

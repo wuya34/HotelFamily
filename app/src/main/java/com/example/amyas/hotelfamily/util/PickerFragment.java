@@ -52,6 +52,7 @@ public class PickerFragment extends DialogFragment {
         });
         mLoopView.setItems(mList);
         mLoopView.setInitPosition(expectIndex);
+        currentIndex = expectIndex;
         mLoopView.setTextSize(30);
         frameLayout.addView(mLoopView);
         return new AlertDialog.Builder(getActivity())
