@@ -10,9 +10,12 @@
         android:layout_width="wrap_content"
 
         android:text="@string/lucky"
+        android:contentDescription="@string/desk_number"
         android:layout_centerInParent="true"
+
         android:layout_height="wrap_content"/>
     <!--app:shadowEnabled="true"-->
+    <!--android:alpha="0.5"-->
     <!--app:buttonColor="@color/fbutton_color_alizarin"-->
     <!--app:shadowColor="@color/fbutton_color_pomegranate"-->
     <!--app:shadowHeight="5dp"-->

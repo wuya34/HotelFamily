@@ -46,7 +46,9 @@ public class OrderLab {
         values.put(DeskOrderSchema.COL.RELATIVE_STRING, deskOrder.getRelativeString());
         return values;
     }
-
+    /*
+    isAvailable  true: 0  false: 1
+    */
     private static ContentValues getContentValues(DeskTable deskTable) {
         ContentValues values = new ContentValues();
         values.put(DeskTableSchema.COL.UUID, deskTable.getUUID().toString());

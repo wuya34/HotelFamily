@@ -80,13 +80,13 @@ public class BookFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_book, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view_book);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         List<DeskTable> deskTables = OrderLab.get(getActivity()).getTableList();
 
         mBookAdapter = new BookAdapter(deskTables);
         mRecyclerView.setAdapter(mBookAdapter);
 
-        // TODO: 2017/11/17 增加开源项目的按钮，设置增加order的接口
+
         return view;
     }
 
@@ -168,7 +168,7 @@ public class BookFragment extends Fragment {
                 mDeskTable = deskTable;
                 mTextView.setText(String.valueOf(deskTable.getDeskNumber()));
                 Glide.with(itemView)
-                        .load(mDeskTable.isAvailable()?R.drawable.booked:R.drawable.available)
+                        .load(mDeskTable.isAvailable()?R.drawable.available:R.drawable.booked)
                         .into(mImageView);
             }
 

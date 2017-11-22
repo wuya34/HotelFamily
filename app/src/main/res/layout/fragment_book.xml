@@ -1,21 +1,10 @@
-<RelativeLayout android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recycler_view_book"
-        tools:context="com.example.amyas.hotelfamily.BookFragment">
-    </android.support.v7.widget.RecyclerView>
-    <!--<ImageView-->
-        <!--android:id="@+id/idea"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginBottom="40dp"-->
-        <!--android:layout_marginEnd="40dp"-->
-        <!--android:src="@drawable/ic_action_idea"/>-->
-</RelativeLayout>
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:gravity="center"
+    android:id="@+id/recycler_view_book"
+    tools:context="com.example.amyas.hotelfamily.BookFragment">
+</android.support.v7.widget.RecyclerView>
